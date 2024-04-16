@@ -1,0 +1,47 @@
+###whole exome sequencing
+#step1
+conda activate SAIGE_HS1
+for i in {1..22}; do 
+Rscript /home1/Huashan1/SAIGE/extdata/step1_fitNULLGLMM.R \
+--sparseGRMFile=/home1/Huashan1/UKB_WES_data/SAIGE/Huashan1/GRM/UKB_GRM_relatednessCutoff_0.05_5000_randomMarkersUsed_unrelated_2nd_relatednessCutoff_0.05_5000_randomMarkersUsed.sparseGRM.mtx \
+--sparseGRMSampleIDFile=/home1/Huashan1/UKB_WES_data/SAIGE/Huashan1/GRM/UKB_GRM_relatednessCutoff_0.05_5000_randomMarkersUsed_unrelated_2nd_relatednessCutoff_0.05_5000_randomMarkersUsed.sparseGRM.mtx.sampleIDs.txt \
+--plinkFile=/home1/Huashan1/UKB_WES_data/qcstep5/unrelated_0_0884/ukb_wes_chr${i}_sample_qc_final_unrelated \
+--useSparseGRMtoFitNULL=FALSE \
+--useSparseGRMforVarRatio=TRUE \
+--IsOverwriteVarianceRatioFile=TRUE \
+--isCovariateOffset=FALSE \
+--sampleIDColinphenoFile=eid \
+--traitType=binary \
+--nThreads=30 \
+--phenoFile=/mnt/storage/home1/Huashan1/wzy_data/panancestry/nbw_fu.csv \
+--phenoCol=cts \
+--covarColList=PC1,PC2,PC3,PC4,PC5,PC6,PC7,PC8,PC9,PC10,sex,age \
+--qCovarColList=sex \
+--outputPrefix=/mnt/storage/home1/Huashan1/wzy_data/panancestry/nbw/cts_s1_chr${i} \
+--isCateVarianceRatio=FALSE \
+--cateVarRatioMinMACVecExclude=20 \
+--cateVarRatioMaxMACVecInclude=50000 
+done
+
+#step2
+for i in {17..18}; do 
+Rscript /home1/Huashan1/SAIGE/extdata/step2_SPAtests.R \
+--bedFile=/home1/Huashan1/UKB_WES_data/qcstep5/unrelated_0_0884/ukb_wes_chr${i}_sample_qc_final_unrelated.bed \
+--bimFile=/home1/Huashan1/UKB_WES_data/qcstep5/unrelated_0_0884/ukb_wes_chr${i}_sample_qc_final_unrelated.bim \
+--famFile=/home1/Huashan1/UKB_WES_data/qcstep5/unrelated_0_0884/ukb_wes_chr${i}_sample_qc_final_unrelated.fam \
+--sparseGRMFile=/home1/Huashan1/UKB_WES_data/SAIGE/Huashan1/GRM/UKB_GRM_relatednessCutoff_0.05_5000_randomMarkersUsed_unrelated_2nd_relatednessCutoff_0.05_5000_randomMarkersUsed.sparseGRM.mtx \
+--sparseGRMSampleIDFile=/home1/Huashan1/UKB_WES_data/SAIGE/Huashan1/GRM/UKB_GRM_relatednessCutoff_0.05_5000_randomMarkersUsed_unrelated_2nd_relatednessCutoff_0.05_5000_randomMarkersUsed.sparseGRM.mtx.sampleIDs.txt \
+--groupFile=/home1/Huashan1/UKB_WES_data/snpEff/output/SAIGE_group_file/lof_missense_five/SnpEff_gene_group_chr${i}.txt \
+--AlleleOrder=ref-first \
+--minMAF=0 \
+--minMAC=0.5 \
+--annotation_in_groupTest="lof,missense:lof,missense:lof:synonymous" \
+--is_output_markerList_in_groupTest=TRUE \
+--LOCO=FALSE \
+--is_fastTest=FALSE \
+--maxMAF_in_groupTest=0.00001,0.0001,0.001,0.01 \
+--GMMATmodelFile=/mnt/storage/home1/Huashan1/wzy_data/panancestry/as/as/cts_s1_chr${i}.rda \
+--varianceRatioFile=/mnt/storage/home1/Huashan1/wzy_data/panancestry/as/as/cts_s1_chr${i}.varianceRatio.txt \
+--SAIGEOutputFile=/mnt/storage/home1/Huashan1/wzy_data/panancestry/as/as/cts_s2_chr${i}.txt
+done
+
